@@ -11,7 +11,7 @@ endif
 CXX_EXTRA?=$(curl-config --cflags)
 CTAGS_I_PATH?=./
 LD_FLAGS= -include-pch header.hpp.gch $(curl-config --libs)
-EXTRA_LD_FLAGS?=-lapt-pkg
+EXTRA_LD_FLAGS?=-lapt-pkg -lcurl
 ADD_SANITIZERS_CC= -g -fsanitize=address -fno-omit-frame-pointer
 ADD_SANITIZERS_LD= -g -fsanitize=address
 MEM_SANITIZERS_CC= -g -fsanitize=memory -fno-omit-frame-pointer
