@@ -1,6 +1,6 @@
 TARGET?=main
-SHELL=bash
-SHELL?=bash
+SHELL=sh
+SHELL?=sh
 CC=clang
 CC?=clang
 ifdef OS
@@ -8,10 +8,10 @@ CC_FLAGS=
 else
 CC_FLAGS=-fpic
 endif
-CC_EXTRA?=
+CC_EXTRA?=-I/usr/include
 CTAGS_I_PATH?=./
 LD_FLAGS=
-EXTRA_LD_FLAGS?=
+EXTRA_LD_FLAGS?=-lxbps
 ADD_SANITIZERS_CC= -g -fsanitize=address -fno-omit-frame-pointer
 ADD_SANITIZERS_LD= -g -fsanitize=address
 MEM_SANITIZERS_CC= -g -fsanitize=memory -fno-omit-frame-pointer

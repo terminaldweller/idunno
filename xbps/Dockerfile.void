@@ -1,5 +1,5 @@
 FROM ghcr.io/void-linux/void-glibc-full:20250401r1
 RUN xbps-install -Suy && xbps-install -Sy base-devel make clang libxbps-devel
-COPY ./makefile ./header.hpp ./main.cpp /xbps/
+COPY ./makefile ./main.c /xbps/
 WORKDIR /xbps
 RUN make
