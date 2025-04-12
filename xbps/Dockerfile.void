@@ -1,0 +1,2 @@
+FROM ghcr.io/void-linux/void-glibc-full:20250401r1
+RUN xbps-install -Su && xbps-install base-devel clang
