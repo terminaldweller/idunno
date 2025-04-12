@@ -6,7 +6,7 @@ type Package struct {
 }
 
 type PackageList struct {
-	Hostname  string    `json:"Hostname"`
+	Hostname  string    `json:"hostname"`
 	Packages  []Package `json:"packages"`
 	Timestamp int64     `json:"timestamp"`
 }

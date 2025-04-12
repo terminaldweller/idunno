@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
@@ -17,7 +18,27 @@ type apiHandler struct {
 }
 
 func (h *apiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("hello"))
+	if r.Method != http.MethodPost {
+		return
+	}
+
+	var packageList PackageList
+
+	err := json.NewDecoder(r.Body).Decode(&packageList)
+	if err != nil {
+		log.Println("could not decode json payload")
+
+		http.Error(w, "bad json payload", http.StatusBadRequest)
+
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(map[string]interface{}{
+		"OK": true,
+	})
+	if err != nil {
+		http.Error(w, "generic server error", http.StatusInternalServerError)
+	}
 }
 
 func main() {
