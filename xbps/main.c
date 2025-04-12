@@ -1,4 +1,4 @@
-
+#include <errno.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -6,6 +6,14 @@
 #include <string.h>
 
 #include <xbps.h>
+
+#define UNUSED __attribute__((__unused__))
+
+struct list_pkgver_cb {
+  unsigned int pkgver_len;
+  unsigned int maxcols;
+  char *linebuf;
+};
 
 int list_pkgs_in_dict(struct xbps_handle *xhp UNUSED, xbps_object_t obj,
                       const char *key UNUSED, void *arg,
@@ -45,44 +53,43 @@ int list_pkgs_in_dict(struct xbps_handle *xhp UNUSED, xbps_object_t obj,
     lpc->linebuf[lpc->maxcols] = '\0';
   }
   puts(lpc->linebuf);
+  printf("%s\n", lpc->linebuf);
 
   return 0;
 }
-unsigned int find_longest_pkgver(struct xbps_handle *xhp, xbps_object_t o) {
-  struct fflongest ffl;
 
-  ffl.d = o;
-  ffl.len = 0;
-
-  if (xbps_object_type(o) == XBPS_TYPE_DICTIONARY) {
-    xbps_array_t array;
-
-    array = xbps_dictionary_all_keys(o);
-    (void)xbps_array_foreach_cb_multi(xhp, array, o, _find_longest_pkgver_cb,
-                                      &ffl);
-    xbps_object_release(array);
-  } else {
-    (void)xbps_pkgdb_foreach_cb_multi(xhp, _find_longest_pkgver_cb, &ffl);
-  }
-
-  return ffl.len;
-}
-
-static int list_pkgs_pkgdb(struct xbps_handle const *const xh) {
+static int list_pkgs_pkgdb(struct xbps_handle *xh) {
   struct list_pkgver_cb lpc;
 
-  return xbps_pkgdb_foreach_cb(xhp, list_pkgs_in_dict, &lpc);
+  return xbps_pkgdb_foreach_cb(xh, list_pkgs_in_dict, &lpc);
 }
 
 int main(int argc, char **argv) {
+  const char *rootdir, *cachedir, *confdir;
 
-  struct xbps_handle *xh;
+  int rv;
 
-  xbps_init(xh);
+  struct xbps_handle xh;
+  memset(&xh, 0, sizeof(xh));
 
-  list_pkgs_pkgdb(xh);
+  if (rootdir) {
+    xbps_strlcpy(xh.rootdir, rootdir, sizeof(xh.rootdir));
+  }
+  if (cachedir) {
+    xbps_strlcpy(xh.cachedir, cachedir, sizeof(xh.cachedir));
+  }
+  if (confdir) {
+    xbps_strlcpy(xh.confdir, confdir, sizeof(xh.confdir));
+  }
 
-  xbps_end(xh);
+  if ((rv = xbps_init(&xh)) != 0) {
+    fprintf(stderr, "xbps_init failed\n");
+    return rv;
+  }
+
+  list_pkgs_pkgdb(&xh);
+
+  xbps_end(&xh);
 
   return 0;
 }
