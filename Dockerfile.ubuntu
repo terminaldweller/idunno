@@ -3,4 +3,5 @@ RUN apt update && apt install -y build-essential libapt-pkg-dev nlohmann-json3-d
 COPY ./header.hpp /app/
 COPY ./main.cpp /app/
 COPY ./makefile /app/
-RUN cd /app && make
+WORKDIR /app
+RUN make
