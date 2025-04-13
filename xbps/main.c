@@ -16,6 +16,7 @@ int make_json_object(cJSON *monitor) {
   char *hostname = NULL;
   cJSON *packages = cJSON_CreateArray();
   cJSON *package = cJSON_CreateObject();
+  cJSON *timestamp = NULL;
 
   if (!monitor) {
     fprintf(stderr, "Failed to create JSON object\n");
@@ -38,6 +39,13 @@ int make_json_object(cJSON *monitor) {
     return -1;
   }
   cJSON_AddItemToObject(monitor, "hostname", hostname_json);
+
+  timestamp = cJSON_CreateNumber(time(NULL));
+  if (!timestamp) {
+    fprintf(stderr, "Failed to create JSON number\n");
+    return -1;
+  }
+  cJSON_AddItemToObject(monitor, "timestamp", timestamp);
 
   packages = cJSON_CreateArray();
   if (!packages) {
@@ -104,8 +112,6 @@ int list_pkgs_in_dict(struct xbps_handle *xhp UNUSED, xbps_object_t obj,
   char *index = strrchr(pkgver, '-');
 
   char *version_string = strdup(index + 1);
-
-  /* printf("%s--%s\n", name, version_string); */
 
   package = cJSON_CreateObject();
   if (!package) {
