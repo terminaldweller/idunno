@@ -27,13 +27,14 @@ static int DoPost(std::string url, json object) {
   std::string readBuffer;
 
   struct curl_slist *slist1 = NULL;
-  slist1 = curl_slist_append(slist1,
-                             "Content-Type: application/json; charset: utf-8");
-  slist1 = curl_slist_append(slist1, "Accept: application/json");
 
   std::string json_dump = object.dump();
 
   if (curl) {
+    slist1 = curl_slist_append(
+        slist1, "Content-Type: application/json; charset: utf-8");
+    slist1 = curl_slist_append(slist1, "Accept: application/json");
+
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist1);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);

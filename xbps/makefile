@@ -11,7 +11,7 @@ endif
 CC_EXTRA?=-I/usr/include
 CTAGS_I_PATH?=./
 LD_FLAGS=
-EXTRA_LD_FLAGS?=-lxbps
+EXTRA_LD_FLAGS?=-lxbps -lcurl
 ADD_SANITIZERS_CC= -g -fsanitize=address -fno-omit-frame-pointer
 ADD_SANITIZERS_LD= -g -fsanitize=address
 MEM_SANITIZERS_CC= -g -fsanitize=memory -fno-omit-frame-pointer
