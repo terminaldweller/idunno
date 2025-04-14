@@ -37,6 +37,7 @@ static int DoPost(std::string url, json object) {
     slist1 = curl_slist_append(slist1, "Accept: application/json");
 
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist1);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
@@ -44,6 +45,13 @@ static int DoPost(std::string url, json object) {
     curl_easy_setopt(curl, CURLOPT_COPYPOSTFIELDS, json_dump.c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
     curl_easy_setopt(curl, CURLOPT_USERAGENT, "idunno-via-libcurl");
+#ifndef SKIP_PEER_VERIFICATION
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+#endif
+#ifndef SKIP_HOSTNAME_VERIFICATION
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+#endif
+    curl_easy_setopt(curl, CURLOPT_CA_CACHE_TIMEOUT, 604800L);
 
     res = curl_easy_perform(curl);
     if (res == CURLE_OK) {
@@ -121,7 +129,7 @@ int main(int argc, char *argv[]) {
 
   auto object = GetJSON(packages);
 
-  DoPost("127.0.0.1:4242", object);
+  DoPost("https://127.0.0.1:4242/api/v1/intake", object);
 
   return 0;
 }

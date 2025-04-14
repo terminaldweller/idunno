@@ -33,6 +33,8 @@ func (h *apiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Println(packageList)
+
 	err = json.NewEncoder(w).Encode(map[string]interface{}{
 		"OK": true,
 	})

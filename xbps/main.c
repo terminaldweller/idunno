@@ -78,6 +78,13 @@ int do_post(char const *const url, char const *const json_string) {
     curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(curl, CURLOPT_HEADER, 1L);
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, slist1);
+#ifndef SKIP_PEER_VERIFICATION
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+#endif
+#ifndef SKIP_HOSTNAME_VERIFICATION
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+#endif
+    curl_easy_setopt(curl, CURLOPT_CA_CACHE_TIMEOUT, 604800L);
 
     res = curl_easy_perform(curl);
     if (res != CURLE_OK) {

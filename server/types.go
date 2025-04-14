@@ -1,8 +1,8 @@
 package main
 
 type Package struct {
-	PackageName   string `json:"packageName"`
-	VersionString string `json:"versionString"`
+	PackageName   string `json:"pkg_name"`
+	VersionString string `json:"pkg_version"`
 }
 
 type PackageList struct {
