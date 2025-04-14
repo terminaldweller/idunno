@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
   cJSON_Delete(monitor);
   printf("%s\n", json_string);
 
-  do_post("127.0.0.1:4242", json_string);
+  do_post("https://127.0.0.1:4242/api/v1/intake", json_string);
 
   xbps_end(&xh);
 
