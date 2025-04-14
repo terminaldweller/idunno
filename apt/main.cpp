@@ -5,10 +5,11 @@
 #include <apt-pkg/init.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgsystem.h>
-
 #include <curl/curl.h>
 #include <iostream>
+#include <limits.h>
 #include <nlohmann/json.hpp>
+#include <unistd.h>
 #include <unordered_map>
 
 using json = nlohmann::json;
@@ -84,32 +85,37 @@ static std::unordered_map<std::string, std::string> GetPackages() {
 }
 
 static json GetJSON(std::unordered_map<std::string, std::string> data) {
-  json j_umap(data);
+  int res;
+  /* json object(data); */
+  json object;
+  json pkgs(data);
+  object["timestamp"] = std::time(nullptr);
+  char hostname[HOST_NAME_MAX];
 
-  /* std::cout << j_umap << "\n"; */
+  res = gethostname(hostname, HOST_NAME_MAX - 1);
+  if (res != 0) {
+  }
 
-  return j_umap;
+  object["hostname"] = std::string(hostname);
+
+  object["packages"] = json::array({});
+
+  int counter = 0;
+
+  for (auto pkg : data) {
+    object["packages"][counter] = {{"pkg_name", pkg.first},
+                                   {"pkg_version", pkg.second}};
+    counter++;
+  }
+
+  std::cout << object << "\n";
+
+  return object;
 }
 
 int main(int argc, char *argv[]) {
 
   std::string tomlConfigPath;
-  std::vector<std::string> args;
-
-  for (int i = 0; i < argc; i++) {
-    args.push_back(argv[i]);
-  }
-
-  if (argc < 3) {
-    std::cerr << "No config file provided by --config. exiting...\n";
-    exit(1);
-  }
-
-  if (args[1] == "--config") {
-    tomlConfigPath = args[2];
-  } else {
-    std::cerr << "Unknown option: " << args[1];
-  }
 
   auto packages = GetPackages();
 
